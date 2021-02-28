@@ -33,11 +33,6 @@ function buildTable(data){
 // create event for clicking of filter button
 button.on("click", runFilter);
 
-
-filters={}
-filterList = ['#datetime', '#city', '#state', '#country', '#shape']
-
-
 function runFilter(){
     filters={}
     filterList = ['#datetime', '#city', '#state', '#country', '#shape']
@@ -47,21 +42,23 @@ function runFilter(){
     for (fID of filterList){
         let filter = d3.select(fID).property("value");
 
+        // if a vaule is entered for the filter, save it to the dictionary
         if (filter){
-            filters[fID] = filter
+            filters[fID.substring(1)] = filter
         }
     }
-    console.log(filters)
 
     if(Object.entries(filters).length ==0){
-        console.log('empty filters')
-        buildTable(filterData)
+        // filters are empty
     }
     else{
-        console.log('else statement')
-        
+        // Loop through all of the filters and keep any data that
+        // matches the filter values
+        Object.entries(filters).forEach(([key, value]) => {
+            filterData = filterData.filter(row => row[key] === value);
+        });
     }
-
+    buildTable(filterData)
 }
 
 // build table on page load
