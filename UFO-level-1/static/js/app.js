@@ -1,41 +1,54 @@
 // from data.js
-var tableData = data;
+const tableData = data;
 
 // get d3 elements
 // get button
 let button = d3.select('#filter-btn');
 
-// create event handlers
-button.on('click', runFilter);
+// get tbody
+const tbody = d3.select('tbody');
 
-// define runFilter function
-function runFilter(){
-
-    // get date to filter
-    let date = d3.select('#datetime').property("value");
-
-    // use the date to create a new array
-    let filteredData = tableData.filter(item => item.datetime === date);
-    // show filtered data in table
-    // get the table element
-    let tbody = d3.select('tbody');
-
-    // loop through every record in the filtered data array
-    filteredData.forEach(item => {
-        // add a new row
+// define function for clearing table and adding data
+function buildTable(data){
+    // First, clear out any existing data
+    tbody.html("");
+    
+    // Next, loop through each object in the data
+    // and append a row and cells for each value in the row
+    data.forEach((dataRow) => {
+        // Append a row to the table body
         let row = tbody.append("tr");
 
         // add data to the columns in the row
-        row.append("td").text(item.datetime);
-        row.append("td").text(item.city);
-        row.append("td").text(item.state);
-        row.append("td").text(item.country);
-        row.append("td").text(item.shape);
-        row.append("td").text(item.durationMinutes);
-        row.append("td").text(item.comments);
-    });
+        row.append("td").text(dataRow.datetime);
+        row.append("td").text(dataRow.city);
+        row.append("td").text(dataRow.state);
+        row.append("td").text(dataRow.country);
+        row.append("td").text(dataRow.shape);
+        row.append("td").text(dataRow.durationMinutes);
+        row.append("td").text(dataRow.comments);
+    })
+}
 
-};
+// create event for clicking of filter button
+button.on("click", runFilter);
 
+function runFilter(){
+    // get date entered in filter
+    let dateFilter = d3.select("#datetime").property("value");
+    console.log('date filter = ', dateFilter);
+    
+    if (dateFilter !== ""){
+        // get filtered data
+        let filteredData = tableData.filter(item => item.datetime == dateFilter);
 
+        // build table
+        buildTable(filteredData);
+    }
+    else{
+        buildTable(tableData)
+    }
+}
 
+// build table on page load
+buildTable(tableData);
